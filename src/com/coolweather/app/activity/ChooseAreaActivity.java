@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -64,12 +65,18 @@ public class ChooseAreaActivity extends Activity {
 	 * 选中的级别
 	 * */
 	private int currentLevel;
+	/*
+	 * 是否从WeatherActivity中跳转过来
+	 * */
+	private boolean isFromWeatherActivity;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		isFromWeatherActivity=getIntent().getBooleanExtra("from_weather_activity", false);
 		SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(this);
-		if(prefs.getBoolean("city_selected", false)){
+		//已经选择了城市且不是从WeatherActivity跳转过来的，才会直接跳转到WeatherActivity
+		if(prefs.getBoolean("city_selected", false)&&!isFromWeatherActivity){
 			Intent intent=new Intent(this,WeatherActivity.class);
 			startActivity(intent);
 			finish();
@@ -85,25 +92,27 @@ public class ChooseAreaActivity extends Activity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View view, int index,
 					long arg3) {
 				if(currentLevel==LEVEL_PROVINCE){
-					selectedProvince=provinceList.get(arg2);
+					selectedProvince = provinceList.get(index);
 					queryCities();
-				}
-				if(currentLevel==LEVEL_CITY){
-					selectedCity=cityList.get(arg2);
+				}else if(currentLevel==LEVEL_CITY){
+					selectedCity = cityList.get(index);
 					queryCountries();
-				}else if(currentLevel==LEVEL_COUNTRY){
-					String countyCode=countryList.get(arg2).getCountryCode();
-					Intent intent=new Intent(ChooseAreaActivity.this,WeatherActivity.class);
-					intent.putExtra("county_code", countyCode);
-					startActivity(intent);
+				} else if(currentLevel==LEVEL_COUNTRY){
+					
+						String countyCode = countryList.get(index)
+								.getCountryCode();
+						Intent intent = new Intent(ChooseAreaActivity.this,
+								WeatherActivity.class);
+						intent.putExtra("county_code", countyCode);
+						startActivity(intent);
 					finish();
 				}
-				
+
 			}
-			
+
 		});
 		queryProvinces();
 		
@@ -131,11 +140,13 @@ public class ChooseAreaActivity extends Activity {
 	 * */
 	private void queryCities(){
 		cityList=coolWeatherDB.loadCities(selectedProvince.getId());
+//		String s=selectedProvince.getId()+"";
+//		Log.d("ceshi", s);
 		if(cityList.size()>0){
 			dataList.clear();
 			for(City c:cityList){
 				dataList.add(c.getCityName());
-				
+				//Log.d("xianshi", c.getCityName());
 			}
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
@@ -143,6 +154,8 @@ public class ChooseAreaActivity extends Activity {
 			currentLevel=LEVEL_CITY;
 		}
 		else{
+//			String s1=selectedProvince.getProvinceCode()+"";
+//			Log.d("ceshi", s1);
 			queryFromServer(selectedProvince.getProvinceCode(),"city");
 		}
 	}
@@ -159,7 +172,7 @@ public class ChooseAreaActivity extends Activity {
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			titleText.setText(selectedCity.getCityName());
-			currentLevel=LEVEL_CITY;
+			currentLevel=LEVEL_COUNTRY;
 		}
 		else{
 			queryFromServer(selectedCity.getCityCode(),"country");
@@ -257,6 +270,11 @@ public class ChooseAreaActivity extends Activity {
 		}else if(currentLevel==LEVEL_CITY){
 			queryProvinces();
 		}else{
+			if (isFromWeatherActivity) {				
+				Intent intent = new Intent(this,
+						WeatherActivity.class);
+				startActivity(intent);
+			}
 			finish();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
 		}
 	}

@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class HttpUtil {
 	public static void sendHttpRequest(final String address,final HttpCallbackListener listener){
@@ -23,6 +24,7 @@ public class HttpUtil {
 			public void run() {
 				HttpURLConnection connection=null;
 				try {
+					Log.d("sendHttpRequestaddress", address);
 					URL url=new URL(address);
 					connection=(HttpURLConnection)url.openConnection();
 					connection.setRequestMethod("GET");
@@ -30,16 +32,20 @@ public class HttpUtil {
 					connection.setReadTimeout(8000);
 					InputStream in=connection.getInputStream();
 					BufferedReader reader=new BufferedReader(new InputStreamReader(in));
-					StringBuffer response=new StringBuffer();
+					StringBuilder response=new StringBuilder();
 					String line;
 					while((line=reader.readLine())!=null){
 						response.append(line);
 					}
+					String re=response.toString();
+					Log.d("sendHttpRequest", "testtest");
 					if(listener!=null){
+						//回调onfinish()方法
 						listener.onFinish(response.toString());
 					}
 				} catch (Exception e) {
 					if(listener!=null){
+						//回调onError()方法
 						listener.onError(e);
 					}
 				}finally{

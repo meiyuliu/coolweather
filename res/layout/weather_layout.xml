@@ -8,6 +8,15 @@
         android:layout_height="50dp"
         android:background="#484E61"
         >
+        <Button 
+         android:id="@+id/switch_city"
+         android:layout_width="60dp"
+         android:layout_height="70dp"
+         android:layout_centerVertical="true"
+         android:layout_marginLeft="10dp"
+         android:textSize="14sp"
+         android:text="切换城市"
+         />
         <TextView 
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
@@ -16,6 +25,16 @@
             android:textColor="#fff"
             android:textSize="24sp"
             />
+        <Button 
+         android:id="@+id/refresh_weather"
+         android:layout_width="60dp"
+         android:layout_height="70dp"
+         android:layout_alignParentRight="true"
+         android:layout_centerVertical="true"
+         android:layout_marginRight="10dp"
+         android:textSize="14sp"
+         android:text="更新天气"
+         />
     </RelativeLayout>
     <RelativeLayout 
         android:layout_width="match_parent"
@@ -92,16 +111,6 @@
     	    </LinearLayout>
     	</LinearLayout>
      </RelativeLayout>
-     <Button 
-         android:id="@+id/switch_city"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:text="切换城市"
-         />
- 	<Button 
-         android:id="@+id/refresh_weather"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:text="更新天气"
-         />
+     
+ 	
 </LinearLayout>
